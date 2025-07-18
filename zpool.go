@@ -512,10 +512,12 @@ func (pool *Pool) ReloadProperties() (err error) {
 		return
 	}
 
-	pool.Properties = make([]Property, PoolNumProps+1)
+	pool.Properties = make([]Property, PoolNumProps)
 	next := propList
 	for next != nil {
-		pool.Properties[next.property] = Property{Value: C.GoString(&(next.value[0])), Source: C.GoString(&(next.source[0]))}
+		if int(next.property) < int(PoolNumProps) {
+			pool.Properties[next.property] = Property{Value: C.GoString(&(next.value[0])), Source: C.GoString(&(next.source[0]))}
+		}
 		next = C.next_property(next)
 	}
 	C.free_properties(propList)
